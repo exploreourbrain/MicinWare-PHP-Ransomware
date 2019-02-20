@@ -1,5 +1,5 @@
 <p align="center">
-![alt text](https://i.postimg.cc/gkQK4cwt/micin-2.png "MicinWare Logo")
+<img src="https://i.postimg.cc/gkQK4cwt/micin-2.png">
 </p>
 # MicinWare PHP Ransomware
 PHP Ransomware targeted at Web Server
