@@ -64,7 +64,7 @@ class MicinWare
 			    <title>MicinWare</title>
 
 			    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-			    <link rel="stylesheet" type="text/css" href="css/style.css">
+			    <link rel="stylesheet" type="text/css" href="https://raw.githubusercontent.com/exploreourbrain/CSS-MicinWare/master/style.css">
 			    <link rel="shortcut icon" type="image/png" href="https://sensorstechforum.com/wp-content/uploads/2016/06/lock-padlock-symbol-for-security-interface.png"/>
 			    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 			    <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
