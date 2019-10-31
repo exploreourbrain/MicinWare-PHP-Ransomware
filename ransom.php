@@ -282,7 +282,7 @@ class MicinWare
 	{
 		$check = file_exists(DOC_ROOT."/.htaccess.old");
 
-		if (!$check) 
+		if ($check) 
 		{
 			unlink(DOC_ROOT."/.htaccess");
 			unlink(DOC_ROOT."/greycat.php");
